@@ -2,7 +2,14 @@
 const form = document.getElementById('form');
 const input = document.getElementById('input');
 const todoUL = document.getElementById('todos');
-console.log(todoUL);
+const todos = JSON.parse(localStorage.getItem("todos"));
+
+
+if (todos) {
+    todos.forEach((todo) => {
+        addTodo(todo);
+    });
+}
 
 form.addEventListener('submit', (e) => {
     //prevents default form submit behavior
@@ -26,7 +33,7 @@ function addTodo(todo) {
         const todoEL = document.createElement('li');
 
         if (todo && todo.completed) {
-            todo.classList.add('completed');
+            todoEL.classList.add('completed');
         }
         //make the text of li same as input value
         todoEL.innerText = todoText;
@@ -37,12 +44,28 @@ function addTodo(todo) {
 
         todoEL.addEventListener('click', () => {
             todoEL.classList.toggle('completed');
+            updateLS();
         });
 
         todoEL.addEventListener('contextmenu', (e) => {
             e.preventDefault();
             //remove list item with right click (context menu)
             todoEL.remove();
+            updateLS();
         });
+        updateLS();
+    }
+
+    function updateLS() {
+        todosEl = document.querySelectorAll('li');
+        const todos = [];
+        todosEl.forEach((todoEl) => {
+            todos.push({
+                text: todoEl.innerText,
+                completed: todoEl.classList.contains('completed')
+            });
+        });
+
+        localStorage.setItem("todos", JSON.stringify(todos));
     }
 }
